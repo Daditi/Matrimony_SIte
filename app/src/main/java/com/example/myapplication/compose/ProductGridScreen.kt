@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,14 +30,14 @@ const val COLUMN_COUNT = 3
 fun ProductGridScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val productList = viewModel.productList.collectAsState().value
     LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
         columns = GridCells.Fixed(COLUMN_COUNT),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 32.dp),
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         items(productList) {
             ProductGridItem(it)
-
         }
     }
 }
