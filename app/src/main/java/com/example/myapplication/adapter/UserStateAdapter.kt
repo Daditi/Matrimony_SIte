@@ -33,7 +33,8 @@ class UserStateAdapter(
         val user = userList[position]
         Picasso.get().load(user.picture).error(R.color.placeholder)
             .placeholder(R.color.placeholder).into(holder.imageView)
-        holder.nameTextView.text = "${user.firstName} ${user.lastName}"
+        holder.firstNameTextView.text = user.firstName
+        holder.lastNameTextView.text = user.lastName
         user.age?.let {
             holder.ageTextView.isVisible = true
             holder.ageTextView.text = "Age: $it"
@@ -60,7 +61,8 @@ class UserStateAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.profileImage)
-        val nameTextView: TextView = itemView.findViewById(R.id.nameTextView)
+        val firstNameTextView: TextView = itemView.findViewById(R.id.firstNameTextView)
+        val lastNameTextView: TextView = itemView.findViewById(R.id.lastNameTextView)
         val locationTextView: TextView = itemView.findViewById(R.id.locationTextView)
         val statusTextView: TextView = itemView.findViewById(R.id.statusTextView)
         val ageTextView: TextView = itemView.findViewById(R.id.ageTextView)
