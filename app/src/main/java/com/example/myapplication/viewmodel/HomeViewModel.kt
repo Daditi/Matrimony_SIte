@@ -1,30 +1,39 @@
 package com.example.myapplication.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.domain.ProductRepository
-import com.example.myapplication.model.Product
+import com.example.myapplication.domain.UserRepository
+import com.example.myapplication.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val listRepository: ProductRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
-    private val _productList = MutableStateFlow<List<Product>>(emptyList())
-    val productList = _productList.asStateFlow()
+    private val _screenState = MutableStateFlow<HomeScreenState>(HomeScreenState.Loading)
+    val screenState: LiveData<HomeScreenState> = _screenState.asLiveData()
 
     init {
         getProductList()
     }
 
     private fun getProductList() = viewModelScope.launch(Dispatchers.IO) {
-        Log.d("productList", listRepository.getProducts().toString())
-        _productList.emit(listRepository.getProducts())
+        userRepository.refreshData()
+        _screenState.value = HomeScreenState.Completed
+    }
+
+    fun observeUserData(): LiveData<List<User>> {
+        return userRepository.getAllUsers()
+    }
+
+    fun updateUserStatus(user: User, status: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        user.status = status
+        userRepository.updateStatus(user)
     }
 }

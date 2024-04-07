@@ -1,11 +1,16 @@
 package com.example.myapplication.di
 
-import com.example.myapplication.data.ProductRepositoryImpl
-import com.example.myapplication.domain.ProductRepository
+import android.content.Context
+import com.example.myapplication.data.UserRepositoryImpl
+import com.example.myapplication.domain.UserRepository
 import com.example.myapplication.network.APIService
+import com.example.room.AppDatabase
+import com.example.room.UserDao
+import com.example.room.UserStateProfileDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,7 +24,7 @@ object AppModule {
     @Provides
     fun providesRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://wi-and-project.free.beeceptor.com/")
+            .baseUrl("https://randomuser.me/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -29,8 +34,29 @@ object AppModule {
         return retrofit.create(APIService::class.java)
     }
 
+    @Singleton
     @Provides
-    fun providesProductRepository(apiService: APIService): ProductRepository {
-        return ProductRepositoryImpl(apiService)
+    fun providesUserDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getInstance(context)
     }
+
+    @Provides
+    fun providesUserDao(appDatabase: AppDatabase): UserDao {
+        return appDatabase.userDao()
+    }
+
+    @Provides
+    fun providesUserStateProfileDao(appDatabase: AppDatabase): UserStateProfileDao {
+        return appDatabase.userStateProfileDao()
+    }
+
+    @Provides
+    fun providesUserRepository(
+        apiService: APIService,
+        userDao: UserDao,
+        userStateProfileDao: UserStateProfileDao
+    ): UserRepository {
+        return UserRepositoryImpl(apiService, userDao, userStateProfileDao)
+    }
+
 }

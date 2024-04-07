@@ -1,10 +1,11 @@
 package com.example.myapplication.network
 
-import com.example.myapplication.model.ProductListResponseDTO
+import com.example.myapplication.model.UserResponseDTO
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface APIService {
-    @GET("list")
-    suspend fun getProducts(): Response<ProductListResponseDTO>
+    @GET("api/")
+    suspend fun getProducts(@Query("results") results: Int): Response<UserResponseDTO>
 }
